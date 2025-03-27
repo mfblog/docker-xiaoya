@@ -4,8 +4,6 @@ alist访问端口：5678
 
 emby访问端口：2345
 
-jellyfin访问端口：2346
-
 tvbox访问地址：http://ip:5678/tvbox/my_ext.json
 
 ## 启动命令
@@ -24,6 +22,12 @@ docker run -d -p 5678:80 -p 2345:2345 -p 2346:2346 --restart=unless-stopped --na
 
 `QUARK_COOKIE`: 夸克的cookie，登陆夸克网盘，F12找一个请求，查看请求中的Cookie信息
 
+`PAN115_COOKIE`:  115网盘的cookie，登陆115网盘，F12找一个请求，查看请求中的Cookie信息
+
+`ALIYUN_TO_115`: 是否将阿里云盘的文件自动迁移到115网盘，true/false，默认false
+
+`PAN115_FOLDER_ID`: 进入115网页版，创建一个文件夹，点击文件夹，复制浏览器115网盘地址中的cid，默认根目录为0
+
 `PIKPAK_USER`: pikpak 账号，用来观看小雅中pikpak分享给你的资源，格式：`qqq@qq.com:aaadds`
 
 `PIKPAK_LIST`: 挂载你自己 pikpak 账号，格式：`挂载名:qqq@qq.com:aaadds,aaa:+8613111111111:dasf`，密码中不支持符号,:
@@ -34,6 +38,8 @@ docker run -d -p 5678:80 -p 2345:2345 -p 2346:2346 --restart=unless-stopped --na
 
 `QUARK_SHARE_LIST`: 挂载额外的夸克网盘分享内容，格式：`挂载名1:分享ID1:文件夹ID1(不存在填root):提取码1(没有留空),挂载名2:分享ID2:文件夹ID2(不存在填root):提取码2`
 
+`PAN115_SHARE_LIST`: 挂载额外的115网盘分享内容，格式：`挂载名1:分享ID1:文件夹ID1(不存在填root):提取码1(没有留空),挂载名2:分享ID2:文件夹ID2(不存在填root):提取码2`
+
 `TVBOX_SECURITY`: 开启tvbox随机订阅地址，true/false，默认：false
 
 `PROXY`: 使用代理，支持http、https、socks5协议，格式：http://ip:7890 或 socks5://ip:7890
@@ -42,11 +48,7 @@ docker run -d -p 5678:80 -p 2345:2345 -p 2346:2346 --restart=unless-stopped --na
 
 `EMBY_ADDR`: emby部署地址，默认http://emby:6908，容器内部使用地址，一般不用改
 
-`JELLYFIN_ADDR`: jellyfin部署地址，默认http://jellyfin:8096，容器内部使用地址，一般不用改
-
 `EMBY_APIKEY`: 填入一个emby的api key，用于在infuse中播放emby
-
-`AUTO_UPDATE_ENABLED`: 每天自动更新小雅的文件，true/false，默认false
 
 `AUTO_CLEAR_ENABLED`: 自动清理阿里云云盘的文件，true/false，默认false
 

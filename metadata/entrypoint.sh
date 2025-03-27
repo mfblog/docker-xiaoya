@@ -109,6 +109,11 @@ download_emby_config() {
     7z x -aoa -mmt=16 temp/config.mp4
 
     touch ${MEDIA_DIR}/config/emby_meta_finished
+
+    #删除临时文件config.mp4
+    if [ "${CLEAR_TEMP:=false}" = "true" ]; then
+        rm -f $MEDIA_DIR/temp/config.mp4
+    fi
 }
 
 download_emby_media() {    
@@ -140,59 +145,12 @@ download_emby_media() {
     chmod -R 777 ${MEDIA_DIR}/xiaoya
 
     touch ${MEDIA_DIR}/xiaoya/emby_media_finished
-}
 
-download_jellyfin_config() {
-    if [ -f ${MEDIA_DIR}/jf_config/jellyfin_meta_finished ]; then
-        echo "Jellyfin metadata has been downloaded. Delete the file ${MEDIA_DIR}/jf_config/jellyfin_meta_finished to re-extract."
-        return
+    #删除临时文件all.mp4,pikpak.mo4
+    if [ "${CLEAR_TEMP:=false}" = "true" ]; then
+        rm -f $MEDIA_DIR/temp/all.mp4
+        rm -f $MEDIA_DIR/temp/pikpak.mp4
     fi
-
-    disk_check ${MEDIA_DIR}/temp 5
-    disk_check ${MEDIA_DIR}/jf_config 20
-
-    echo "Downloading Jellyfin config..."
-
-    cd ${MEDIA_DIR}/temp
-    download_meta config_jf.mp4 Jellyfin/
-    
-    echo "Extracting Jellyfin config..."
-
-    cd ${MEDIA_DIR}
-    7z x -aoa -mmt=16 temp/config_jf.mp4
-
-    touch ${MEDIA_DIR}/jf_config/jellyfin_meta_finished
-}
-
-download_jellyfin_media() {    
-    if [ -f "${MEDIA_DIR}/jf_xiaoya/jellyfin_media_finished" ]; then
-        echo "Jellyfin media has been downloaded. Delete the file ${MEDIA_DIR}/jf_xiaoya/jellyfin_media_finished to re-extract."
-        return
-    fi
-
-    echo "Cleaning up Jellyfin media..."
-    rm -rf ${MEDIA_DIR}/jf_xiaoya/*
-
-    disk_check ${MEDIA_DIR}/temp 60
-    disk_check ${MEDIA_DIR}/jf_xiaoya 70
-    
-    echo "Downloading Jellyfin media..."
-
-    cd "${MEDIA_DIR}/temp"
-    download_meta all_jf.mp4 Jellyfin/
-    download_meta PikPak_jf.mp4 Jellyfin/
-
-    echo "Extracting Jellyfin media..."
-
-    cd ${MEDIA_DIR}/jf_xiaoya
-    7z x -aoa -mmt=16 ${MEDIA_DIR}/temp/all_jf.mp4
-
-    cd ${MEDIA_DIR}/jf_xiaoya
-    7z x -aoa -mmt=16 ${MEDIA_DIR}/temp/PikPak_jf.mp4
-
-    chmod -R 777 ${MEDIA_DIR}/jf_xiaoya
-
-    touch ${MEDIA_DIR}/jf_xiaoya/jellyfin_media_finished
 }
 
 # emby
@@ -213,14 +171,8 @@ if [ "${EMBY_ENABLED:=false}" = "true" ]; then
         # 随机生成一个时间，避免给服务器造成压力
         random_min=$(shuf -i 0-59 -n 1)
         random_hour=$(shuf -i 1-6 -n 1)
-        crontabs="${crontabs}\n${random_min} ${random_hour} * * * python3 /solid.py --media ${MEDIA_DIR}/xiaoya"
+        crontabs="${crontabs}\n${random_min} ${random_hour} * * * /usr/local/bin/python3 /solid.py --media ${MEDIA_DIR}/xiaoya"
     fi
-fi
-
-# jellyfin
-if [ "${JELLYFIN_ENABLED:=false}" = "true" ]; then
-    download_jellyfin_config
-    download_jellyfin_media
 fi
 
 # 添加定时任务

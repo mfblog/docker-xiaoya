@@ -1,11 +1,8 @@
 #!/bin/bash
 
-set -e
-
 DATA_DIR="/www/data"
 
 base_urls=(
-    "https://gitlab.com/xiaoyaliu/data/-/raw/main"
     "https://raw.githubusercontent.com/xiaoyaliu00/data/main"
     "https://cdn.wygg.shop/https://raw.githubusercontent.com/xiaoyaliu00/data/main"
     "https://fastly.jsdelivr.net/gh/xiaoyaliu00/data@latest"
@@ -81,17 +78,14 @@ restart() {
 }
 
 update() {
-    if ! download_files; then
-        echo "Failed to download files or no need to update"
-        return 1
-    fi
+    download_files
     restart
 }
 
 # 进程守护函数
 daemon() {
 
-    if [ -z "$(pgrep alist)" ] && [ "$(cat /tmp/status)" = "1" ]; then
+    if [ -z "$(pgrep alist)" ] && [ "$(cat /tmp/status 2> /dev/null)" = "1" ]; then
         start
     fi
 
